@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/PPC_Brgy_2.js"></script>
+        <script src="data/PPC_Brgy_COVID_3.js"></script>
+        <script src="data/Hospitals_4.js"></script>
+        <script src="data/QuarantineFacilities_5.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[9.691906556819832,118.64692851088198],[9.821425671868996,118.8934908819895]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_GoogleSatellite_0;
+        var layer_OpenStreetMapmonochrome_1 = L.tileLayer('http://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OpenStreetMapmonochrome_1;
+        map.addLayer(layer_OpenStreetMapmonochrome_1);
+        function pop_PPC_Brgy_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? Autolinker.link(feature.properties['ID'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['BRGY_NAME'] !== null ? Autolinker.link(feature.properties['BRGY_NAME'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['BRGY_TYPE'] !== null ? Autolinker.link(feature.properties['BRGY_TYPE'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Area_has'] !== null ? Autolinker.link(feature.properties['Area_has'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AreaInHect'] !== null ? Autolinker.link(feature.properties['AreaInHect'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_PPC_Brgy_2_0() {
+            return {
+                pane: 'pane_PPC_Brgy_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(229,182,54,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_PPC_Brgy_2');
+        map.getPane('pane_PPC_Brgy_2').style.zIndex = 402;
+        map.getPane('pane_PPC_Brgy_2').style['mix-blend-mode'] = 'normal';
+        var layer_PPC_Brgy_2 = new L.geoJson(json_PPC_Brgy_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_PPC_Brgy_2',
+            layerName: 'layer_PPC_Brgy_2',
+            pane: 'pane_PPC_Brgy_2',
+            onEachFeature: pop_PPC_Brgy_2,
+            style: style_PPC_Brgy_2_0,
+        });
+        bounds_group.addLayer(layer_PPC_Brgy_2);
+        map.addLayer(layer_PPC_Brgy_2);
+        function pop_PPC_Brgy_COVID_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['BRGY_NAME'] !== null ? Autolinker.link(feature.properties['BRGY_NAME'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['BRGY_TYPE'] !== null ? Autolinker.link(feature.properties['BRGY_TYPE'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Confirmed</th>\
+                        <td>' + (feature.properties['Confirmed'] !== null ? Autolinker.link(feature.properties['Confirmed'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PUI</th>\
+                        <td>' + (feature.properties['PUI'] !== null ? Autolinker.link(feature.properties['PUI'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PUM</th>\
+                        <td>' + (feature.properties['PUM'] !== null ? Autolinker.link(feature.properties['PUM'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_PPC_Brgy_COVID_3_0() {
+            return {
+                pane: 'pane_PPC_Brgy_COVID_3',
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,154,153,0.5019607843137255)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_PPC_Brgy_COVID_3');
+        map.getPane('pane_PPC_Brgy_COVID_3').style.zIndex = 403;
+        map.getPane('pane_PPC_Brgy_COVID_3').style['mix-blend-mode'] = 'normal';
+        var layer_PPC_Brgy_COVID_3 = new L.geoJson(json_PPC_Brgy_COVID_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PPC_Brgy_COVID_3',
+            layerName: 'layer_PPC_Brgy_COVID_3',
+            pane: 'pane_PPC_Brgy_COVID_3',
+            onEachFeature: pop_PPC_Brgy_COVID_3,
+            style: style_PPC_Brgy_COVID_3_0,
+        });
+        bounds_group.addLayer(layer_PPC_Brgy_COVID_3);
+        map.addLayer(layer_PPC_Brgy_COVID_3);
+        function pop_Hospitals_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? Autolinker.link(feature.properties['id'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Name'] !== null ? Autolinker.link(feature.properties['Name'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Capacity</th>\
+                        <td>' + (feature.properties['Capacity'] !== null ? Autolinker.link(feature.properties['Capacity'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Hospitals_4_0() {
+            return {
+                pane: 'pane_Hospitals_4',
+                radius: 12.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+        }
+        function style_Hospitals_4_1() {
+            return {
+                pane: 'pane_Hospitals_4',
+                radius: 2.6249999999999996,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Hospitals_4');
+        map.getPane('pane_Hospitals_4').style.zIndex = 404;
+        map.getPane('pane_Hospitals_4').style['mix-blend-mode'] = 'normal';
+        var layer_Hospitals_4 = new L.geoJson.multiStyle(json_Hospitals_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Hospitals_4',
+            layerName: 'layer_Hospitals_4',
+            pane: 'pane_Hospitals_4',
+            onEachFeature: pop_Hospitals_4,
+            pointToLayers: [function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Hospitals_4_0(feature));
+            },function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Hospitals_4_1(feature));
+            },
+        ]});
+        bounds_group.addLayer(layer_Hospitals_4);
+        map.addLayer(layer_Hospitals_4);
+        function pop_QuarantineFacilities_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? Autolinker.link(feature.properties['id'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Name'] !== null ? Autolinker.link(feature.properties['Name'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Capacity</th>\
+                        <td>' + (feature.properties['Capacity'] !== null ? Autolinker.link(feature.properties['Capacity'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_QuarantineFacilities_5_0() {
+            return {
+                pane: 'pane_QuarantineFacilities_5',
+                shape: 'triangle',
+                radius: 16.0,
+                opacity: 1,
+                color: 'rgba(71,179,251,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(71,179,251,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_QuarantineFacilities_5');
+        map.getPane('pane_QuarantineFacilities_5').style.zIndex = 405;
+        map.getPane('pane_QuarantineFacilities_5').style['mix-blend-mode'] = 'normal';
+        var layer_QuarantineFacilities_5 = new L.geoJson(json_QuarantineFacilities_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_QuarantineFacilities_5',
+            layerName: 'layer_QuarantineFacilities_5',
+            pane: 'pane_QuarantineFacilities_5',
+            onEachFeature: pop_QuarantineFacilities_5,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_QuarantineFacilities_5_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_QuarantineFacilities_5);
+        map.addLayer(layer_QuarantineFacilities_5);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/QuarantineFacilities_5.png" /> Quarantine Facilities': layer_QuarantineFacilities_5,'<img src="legend/Hospitals_4.png" /> Hospitals': layer_Hospitals_4,'<img src="legend/PPC_Brgy_COVID_3.png" /> PPC_Brgy_COVID': layer_PPC_Brgy_COVID_3,'<img src="legend/PPC_Brgy_2.png" /> PPC_Brgy': layer_PPC_Brgy_2,"OpenStreetMap monochrome": layer_OpenStreetMapmonochrome_1,"Google Satellite": layer_GoogleSatellite_0,}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_PPC_Brgy_COVID_3.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['BRGY_NAME'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['BRGY_NAME']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_PPC_Brgy_COVID_3'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_PPC_Brgy_COVID_3]);
+        map.on("zoomend", function(){
+            resetLabels([layer_PPC_Brgy_COVID_3]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_PPC_Brgy_COVID_3]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_PPC_Brgy_COVID_3]);
+        });
+        </script>
+    </body>
+</html>
